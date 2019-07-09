@@ -1,0 +1,10 @@
+test_graphviz_mark
+digraph G {
+    SchedulerBase -> {FlowControlledFetcher; HostInfoResolver};
+    FlowControlledFetcher -> {Fetcher; SchedulerTypes};
+    HostInfoResolver -> {DNSResolver; RobotsFetcher};
+    RobotsFetcher -> {FlowControlledFetcherForRobots; HttpFetchProtocal};
+    FlowControlledFetcherForRobots -> {Fetcher;FetcherForRobots;FlowControlledFetcher};
+    FetcherForRobots -> {Fetcher};
+}
+test_graphviz_mark
