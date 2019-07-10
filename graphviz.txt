@@ -1,10 +1,59 @@
 test_graphviz_mark
 digraph G {
-    SchedulerBase -> {FlowControlledFetcher; HostInfoResolver};
-    FlowControlledFetcher -> {Fetcher; SchedulerTypes};
-    HostInfoResolver -> {DNSResolver; RobotsFetcher};
-    RobotsFetcher -> {FlowControlledFetcherForRobots; HttpFetchProtocal};
-    FlowControlledFetcherForRobots -> {Fetcher;FetcherForRobots;FlowControlledFetcher};
-    FetcherForRobots -> {Fetcher};
+    one -> two;
+    two -> three;
+    three -> everything;
 }
 test_graphviz_mark
+
+norm_fetcher_structure
+digraph G {
+    SchedulerBase -> FlowControlledFetcher [label="Has"];
+    SchedulerBase -> HostInfoResolver [label="Has"];
+    SchedulerBase -> IFlowControlledFetcherEvents [label="Inherited from"];
+    FlowControlledFetcher -> FlowControlledFetcherImpl [label="Has"];
+    FlowControlledFetcherImpl -> ThreadingFetcher [label="Has"];
+    FlowControlledFetcherImpl -> IMessageEvents [label="Inherited from\nPoint to"];
+    FlowControlledFetcherImpl -> IFlowControlledFetcherEvents [label="Point to"];
+    HostInfoResolver -> DNSResolver [label="Has"];
+    HostInfoResolver -> RobotsFetcher [label="Has"];
+    HostInfoResolver -> RobotsClient [label="Has"];
+    RobotsFetcher -> IMessageEvents [label="Inherited from"];
+    RobotsFetcher -> IFlowControlledFetcherEvents [label="Inherited from"];
+    RobotsFetcher -> FlowControlledFetcher [label="Has"];
+    ThreadingFetcher -> Fetcher [label="Has"];
+    ThreadingFetcher -> IFetcherEvents [label="Inherited from"];
+    Fetcher -> IMessageEvents [label="Point to"];
+    Fetcher -> IFetcherEvents [label="Point to"];
+    {rank = same; HostInfoResolver; FlowControlledFetcher;}
+}
+norm_fetcher_structure
+webkit_fetcher_structure
+digraph G {
+    SchedulerBase -> FlowControlledFetcher [label="Has"];
+    SchedulerBase -> HostInfoResolver [label="Has"];
+    SchedulerBase -> IFlowControlledFetcherEvents [label="Inherited from"];
+    FlowControlledFetcher -> FlowControlledFetcherImpl [label="Has"];
+    FlowControlledFetcherImpl -> ThreadingFetcher [label="Has"];
+    FlowControlledFetcherImpl -> IMessageEvents [label="Inherited from\nPoint to"];
+    FlowControlledFetcherImpl -> IFlowControlledFetcherEvents [label="Point to"];
+    HostInfoResolver -> DNSResolver [label="Has"];
+    HostInfoResolver -> RobotsFetcher [label="Has"];
+    RobotsFetcher -> IMessageEvents [label="Inherited from"];
+    RobotsFetcher -> IFlowControlledFetcherEvents [label="Inherited from"];
+    RobotsFetcher -> FlowControlledFetcherForRobots[label="Has"];
+    FlowControlledFetcherForRobots -> FlowControlledFetcherImplForRobots [label="Has"];
+    FlowControlledFetcherImplForRobots -> ThreadingFetcherForRobots [label="Has"];
+    FlowControlledFetcherImplForRobots -> IMessageEvents [label="Inherited from\nPoint to"];
+    FlowControlledFetcherImplForRobots -> IFlowControlledFetcherEvents [label="Point to"];
+    ThreadingFetcherForRobots -> FetcherForRobots [label="Has"];
+    ThreadingFetcherForRobots -> IFetcherEvents [label="Inherited from"];
+    FetcherForRobots -> IMessageEvents [label="Point to"];
+    FetcherForRobots -> IFetcherEvents [label="Point to"];
+    ThreadingFetcher -> Fetcher [label="Has"];
+    ThreadingFetcher -> IFetcherEvents [label="Inherited from"];
+    Fetcher -> IMessageEvents [label="Point to"];
+    Fetcher -> IFetcherEvents [label="Point to"];
+    {rank = same; HostInfoResolver; FlowControlledFetcher;}
+}
+webkit_fetcher_structure
