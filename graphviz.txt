@@ -57,3 +57,29 @@ digraph G {
     {rank = same; HostInfoResolver; FlowControlledFetcher;}
 }
 webkit_fetcher_structure
+merge_fetcher_structure
+digraph G {
+    SchedulerBase -> FlowControlledFetcher [label="Has"];
+    SchedulerBase -> HostInfoResolver [label="Has"];
+    SchedulerBase -> IFlowControlledFetcherEvents [label="Inherited from"];
+    FlowControlledFetcher -> FlowControlledFetcherImpl [label="Has"];
+    FlowControlledFetcherImpl -> ThreadingFetcher [label="Has"];
+    FlowControlledFetcherImpl -> IMessageEvents [label="Inherited from\nPoint to"];
+    FlowControlledFetcherImpl -> IFlowControlledFetcherEvents [label="Point to"];
+    HostInfoResolver -> DNSResolver [label="Has"];
+    HostInfoResolver -> RobotsFetcher [label="Has"];
+    HostInfoResolver -> RobotsClient [label="Has"];
+    RobotsFetcher -> IMessageEvents [label="Inherited from"];
+    RobotsFetcher -> IFlowControlledFetcherEvents [label="Inherited from"];
+    RobotsFetcher -> FlowControlledFetcher [label="Has"];
+    ThreadingFetcher -> Fetcher [label="Has"];
+    ThreadingFetcher -> IFetcherEvents [label="Inherited from"];
+    Fetcher -> IMessageEvents [label="Point to"];
+    Fetcher -> IFetcherEvents [label="Point to"];
+    {rank = same; HostInfoResolver; FlowControlledFetcher;}
+    FlowControlledFetcherImpl -> WebkitThreadingFetcher [label="Has" style="dashed"];
+    WebkitThreadingFetcher -> Fetcher [label="Has" style="dashed"];
+    WebkitThreadingFetcher -> IFetcherEvents [label="Inherited from" style="dashed"];
+    WebkitThreadingFetcher [style="dashed"];
+}
+merge_fetcher_structure
