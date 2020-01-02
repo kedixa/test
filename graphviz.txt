@@ -83,3 +83,51 @@ digraph G {
     WebkitThreadingFetcher [style="dashed"];
 }
 merge_fetcher_structure
+
+consumer_structure
+digraph G {
+    //rankdir=LR;
+    main_main -> TSSClient_run;
+    TSSClient_run -> WebConsumer_run;
+    WebConsumer_run -> TSSConsumerCore_start;
+    WebConsumer_run -> TSSConsumer_ProcessFetchResultThread;
+    TSSConsumer_ProcessFetchResultThread -> {TSSConsumerCore_getResult, TSSConsumer_ProcessNewFetchResult};
+    TSSConsumer_ProcessNewFetchResult -> {WebConsumer_OnProcessStart, TSSConsumer_ProcessFetchSucceed};
+    TSSConsumer_ProcessFetchSucceed -> {TSSConsumer_GetResultPage, WebConsumer_PageFilter, TSSConsumer_IsPageHtml,
+        WebConsumer_HandleFetchResult, TSSConsumer_SetMetaHeader, PageStore_WritePage, TSSConsumer_ExtractUrls, WebConsumer_OnProcessDone};
+    TSSConsumer_ExtractUrls -> {TSSConsumer_IsInWhiteSiteList, TSSConsumer_IsChinesePage, WebConsumer_HandleExtractLink,
+        TSSConsumer_EncodingNormalize, TSSHtmlPageProcessor_ProcessHtmlPage};
+    TSSHtmlPageProcessor_ProcessHtmlPage -> TSSLinkParser_Parse;
+    TSSLinkParser_Parse -> ParseHtmlLink;
+    ParseHtmlLink -> TODO;
+
+    main_main [label="main::\nmain"];
+    TSSClient_run [label="TSSClient::\nrun"];
+    WebConsumer_run [label="WebConsumer\n(TSSConsumer)::\nrun"];
+    TSSConsumerCore_start [label="TSSConsumerCore::\nstart"];
+    TSSConsumer_ProcessFetchResultThread [label="TSSConsumer::\nProcessFetchResultThread"];
+    TSSConsumerCore_getResult [label="TSSConsumerCore::\ngetResult"];
+    TSSConsumer_ProcessNewFetchResult [label="TSSConsumer::\nProcessNewFetchResult"];
+    WebConsumer_OnProcessStart [label="WebConsumer\n(TSSConsumer)::\nOnProcessStart"];
+    TSSConsumer_ProcessFetchSucceed [label="TSSConsumer::\nProcessFetchSucceed"];
+    TSSConsumer_GetResultPage [label="TSSConsumer::\nGetResultPage\nUncompress page"];
+    WebConsumer_PageFilter [label="WebConsumer\n(TSSConsumer)::\nPageFilter"];
+    TSSConsumer_IsPageHtml [label="TSSConsumer::\nIsPageHtml"];
+    WebConsumer_HandleFetchResult [label="WebConsumer\n(TSSConsumer)::\nHandleFetchResult"];
+    TSSConsumer_SetMetaHeader [label="TSSConsumer::\nSetMetaHeader"];
+    PageStore_WritePage [label="PageStore::\nWritePage"];
+    TSSConsumer_ExtractUrls [label="TSSConsumer::\nExtractUrls"];
+    WebConsumer_OnProcessDone [label="WebConsumer\n(TSSConsumer)::\nOnProcessDone"];
+    TSSConsumer_IsInWhiteSiteList [label="TSSConsumer::\nIsInWhiteSiteList"];
+    TSSConsumer_IsChinesePage [label="TSSConsumer::\nIsChinesePage"];
+    WebConsumer_HandleExtractLink [label="WebConsumer\n(TSSConsumer)::\nHandleExtractLink"];
+    TSSConsumer_EncodingNormalize [label="TSSConsumer::\nEncodingNormalize"];
+    TSSHtmlPageProcessor_ProcessHtmlPage [label="TSSHtmlPageProcessor::\nProcessHtmlPage"];
+    TSSLinkParser_Parse [label="TSSLinkParser::\nParse"];
+    ParseHtmlLink [label="hlink.h::\nParseHtmlLink"];
+    subgraph cluster_0 {label="handle 8.86ms"; WebConsumer_PageFilter, TSSConsumer_IsPageHtml, WebConsumer_HandleFetchResult; };
+    subgraph cluster_1 {label="write 0.00ms"; TSSConsumer_SetMetaHeader, PageStore_WritePage; };
+    subgraph cluster_2 {label="extract 18.15ms"; TSSConsumer_ExtractUrls; };
+    subgraph cluster_3 {label="done 3.79ms"; WebConsumer_OnProcessDone; };
+}
+consumer_structure
