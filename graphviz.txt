@@ -90,7 +90,7 @@ digraph G {
     main_main -> TSSClient_run;
     TSSClient_run -> WebConsumer_run;
     WebConsumer_run -> TSSConsumerCore_start;
-    WebConsumer_run -> TSSConsumer_ProcessFetchResultThread;
+    WebConsumer_run -> TSSConsumer_ProcessFetchResultThread [label="multithread run"];
     TSSConsumer_ProcessFetchResultThread -> {TSSConsumerCore_getResult, TSSConsumer_ProcessNewFetchResult};
     TSSConsumer_ProcessNewFetchResult -> {WebConsumer_OnProcessStart, TSSConsumer_ProcessFetchSucceed};
     TSSConsumer_ProcessFetchSucceed -> {TSSConsumer_GetResultPage, WebConsumer_PageFilter, TSSConsumer_IsPageHtml,
@@ -99,7 +99,10 @@ digraph G {
         TSSConsumer_EncodingNormalize, TSSHtmlPageProcessor_ProcessHtmlPage};
     TSSHtmlPageProcessor_ProcessHtmlPage -> TSSLinkParser_Parse;
     TSSLinkParser_Parse -> ParseHtmlLink;
-    ParseHtmlLink -> TODO;
+    ParseHtmlLink -> Parser;
+    Parser -> WebConsumer_OnFindLink [label="for each link\ncallback"];
+    WebConsumer_OnFindLink -> {UriDupDetector_Check, TSSConsumer_TransformUrl, WebConsumer_UrlFilter, UriDupDetector_Insert,
+        regex_match_validlink, URLEncode, WebConsumer_AddNewUriToLocal};
 
     main_main [label="main::\nmain"];
     TSSClient_run [label="TSSClient::\nrun"];
@@ -125,9 +128,19 @@ digraph G {
     TSSHtmlPageProcessor_ProcessHtmlPage [label="TSSHtmlPageProcessor::\nProcessHtmlPage"];
     TSSLinkParser_Parse [label="TSSLinkParser::\nParse"];
     ParseHtmlLink [label="hlink.h::\nParseHtmlLink"];
+    Parser [label="SpiderKernel::\nParser"];
+    WebConsumer_OnFindLink [label="WebConsumer\n(TSSConsumer)::\nOnFindLink"];
+    UriDupDetector_Check [label="UriDupDetector::\nCheck"];
+    TSSConsumer_TransformUrl [label="TSSConsumer::\nTransformUrl"];
+    WebConsumer_UrlFilter [label="WebConsumer\n(TSSConsumer)::\nUrlFilter" color="red"];
+    UriDupDetector_Insert [label="UriDupDetector::\nInsert"];
+    regex_match_validlink [label="regex_match(validlink)"];
+    URLEncode [label="basetool::\nURLEncode"];
+    WebConsumer_AddNewUriToLocal [label="WebConsumer\n(TSSConsumer)::\nAddNewUriToLocal"];
     subgraph cluster_0 {label="handle 8.86ms"; WebConsumer_PageFilter, TSSConsumer_IsPageHtml, WebConsumer_HandleFetchResult; };
     subgraph cluster_1 {label="write 0.00ms"; TSSConsumer_SetMetaHeader, PageStore_WritePage; };
     subgraph cluster_2 {label="extract 18.15ms"; TSSConsumer_ExtractUrls; };
     subgraph cluster_3 {label="done 3.79ms"; WebConsumer_OnProcessDone; };
 }
+
 consumer_structure
