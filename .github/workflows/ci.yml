@@ -11,9 +11,12 @@ jobs:
   build:
     name: build
     runs-on: ubuntu-20.04
+    strategy:
+      matrix:
+        python-version: ["3.8", "3.9"]
 
     steps:
-    - name: step1
+    - name: Set up Python ${{ matrix.python-version }}
       run: |
         echo "hello world"
         python --version
