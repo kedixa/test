@@ -26,6 +26,6 @@ jobs:
         echo "hello world"
         ls -lht
         python --version
-        pip3 install -y setuptools wheel
+        pip3 install setuptools wheel
         git clone https://github.com/kedixa/pykedixa.git
         cd pykedixa && make install
