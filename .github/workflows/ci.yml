@@ -22,5 +22,6 @@ jobs:
         CC: gcc-${{ matrix.gcc-version }}
         CXX: g++-${{ matrix.gcc-version }}
       run: |
+        apt install libgtest-dev -y
         git clone https://github.com/kedixa/corkflow.git
-        bazel build ...
+        cd corkflow && bazel build ...
