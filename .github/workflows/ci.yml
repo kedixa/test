@@ -17,18 +17,14 @@ jobs:
         - cc: gcc-10
           cxx: g++-10
           opts: --cxxopt=-fcoroutines
-        - cc: gcc-11
-          cxx: g++-11
-          opts: ""
-        - cc: gcc-12
-          cxx: g++-12
-          opts: ""
 
     steps:
     - name: Prepare
       run: |
         sudo apt install -y libgtest-dev valgrind
     - uses: actions/checkout@v3
+    - name: Setup upterm session
+      uses: lhotari/action-upterm@v1
     - name: Build With GCC
       env:
         CC: ${{ matrix.compiler.cc }}
