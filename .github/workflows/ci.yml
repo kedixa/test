@@ -9,19 +9,33 @@ on:
 
 jobs:
   build:
-    name: build
+    name: Build
     runs-on: ubuntu-22.04
     strategy:
       matrix:
-        gcc-version: ["10", "11"]
+        compiler:
+          -
+            cc: gcc-10
+            cxx: g++-10
+            opts: --cxxopt=-fcoroutines
+          -
+            cc: gcc-11
+            cxx: g++-11
+            opts: ""
+          -
+            cc: gcc-12
+            cxx: g++-12
+            opts: ""
 
     steps:
-    - uses: actions/checkout@v3
-    - name: Build
-      env:
-        CC: gcc-${{ matrix.gcc-version }}
-        CXX: g++-${{ matrix.gcc-version }}
+    - name: Prepare
       run: |
         sudo apt install -y libgtest-dev valgrind
-        git clone https://github.com/kedixa/corkflow.git
-        cd corkflow && bazel test ... --config=memcheck --cxxopt=-fcoroutines
+    - uses: actions/checkout@v3
+    - name: Build With GCC
+      env:
+        CC: ${{ matrix.compiler.cc }}
+        CXX: ${{ matrix.compiler.cxx }}
+        BAZEL_OPTS: ${{ matrix.compiler.opts }}
+      run: |
+        echo $CC $CXX $BAZEL_OPTS
