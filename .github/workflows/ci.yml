@@ -10,7 +10,7 @@ on:
 jobs:
   build:
     name: Build
-    runs-on: ubuntu-20.04
+    runs-on: macos-latest
     strategy:
       matrix:
         compiler:
@@ -19,10 +19,6 @@ jobs:
           opts: --cxxopt=-fcoroutines
 
     steps:
-    - name: Prepare
-      run: |
-        sudo apt install -y libgtest-dev valgrind
-    - uses: actions/checkout@v3
     - name: Setup upterm session
       uses: lhotari/action-upterm@v1
       with:
