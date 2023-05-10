@@ -14,18 +14,15 @@ jobs:
     strategy:
       matrix:
         compiler:
-          -
-            cc: gcc-10
-            cxx: g++-10
-            opts: --cxxopt=-fcoroutines
-          -
-            cc: gcc-11
-            cxx: g++-11
-            opts: ""
-          -
-            cc: gcc-12
-            cxx: g++-12
-            opts: ""
+        - cc: gcc-10
+          cxx: g++-10
+          opts: --cxxopt=-fcoroutines
+        - cc: gcc-11
+          cxx: g++-11
+          opts: ""
+        - cc: gcc-12
+          cxx: g++-12
+          opts: ""
 
     steps:
     - name: Prepare
