@@ -19,7 +19,6 @@ jobs:
     steps:
     - name: Prepare
       run: |
-        apt update
         apt install -y software-properties-common
         add-apt-repository ppa:ubuntu-toolchain-r/test
         apt install -y gcc-11 g++-11 libgtest-dev libssl-dev git cmake valgrind
@@ -49,6 +48,15 @@ jobs:
     - name: Prepare
       run: |
         sudo dnf install -y gcc gcc-c++ openssl openssl-devel gtest gtest-devel valgrind git cmake
+    - uses: actions/checkout@v3
+      with:
+        repository: kedixa/coke
+        ref: dev-build
+    - uses: actions/checkout@v3
+      with:
+        repository: sogou/workflow
+        ref: ${{ env.wf_tag }}
+        path: workflow
     - name: Build
       run: |
         cmake -S workflow -B build.workflow -D CMAKE_CXX_STANDARD=20
