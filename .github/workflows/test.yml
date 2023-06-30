@@ -1,66 +1,45 @@
 on:
-  push:
-    branches:
-    - master
-  pull_request:
-    branches:
-    - master
   workflow_dispatch:
 
 env:
-  wf_tag: v0.10.7
+  wf_sha: a7785020dfdd3a770048de9c805dd9455d42b390
 
 jobs:
-  build:
-    name: Build
-    runs-on: ubuntu-latest
-    container:
-      image: ubuntu:20.04
-    steps:
-    - name: Prepare
-      run: |
-        apt update
-        apt install -y software-properties-common
-        add-apt-repository ppa:ubuntu-toolchain-r/test
-        apt install -y gcc-11 g++-11 libgtest-dev libssl-dev git cmake valgrind
-    - uses: actions/checkout@v3
-      with:
-        repository: kedixa/coke
-        ref: dev-build
-    - uses: actions/checkout@v3
-      with:
-        repository: sogou/workflow
-        ref: ${{ env.wf_tag }}
-        path: workflow
-        fetch-depth: 1
-    - name: aaa
-      run: |
-        export CC=gcc-11 CXX=g++-11
-        cmake -S workflow -B build.workflow -D CMAKE_CXX_STANDARD=20
-        make -C workflow -j 8
-        cmake -S . -B build -D Workflow_DIR=workflow -D ENABLE_TEST=1
-        make -C build -j 8 all test
-  build-fedora:
-    name: fedora-39
+  build-centos7:
+    name: centos7
     runs-on: ubuntu-22.04
     container:
-      image: fedora:39
+      image: centos:centos7.9.2009
     steps:
     - name: Prepare
       run: |
-        sudo dnf install -y gcc gcc-c++ openssl openssl-devel gtest gtest-devel valgrind git cmake
+        yum install --nogpgcheck -y epel-release centos-release-scl
+        yum install --nogpgcheck -y devtoolset-11-gcc devtoolset-11-gcc-c++ openssl openssl-devel git cmake3
     - uses: actions/checkout@v3
       with:
-        repository: kedixa/coke
-        ref: dev-build
+          repository: kedixa/fcopy
+          ref: master
     - uses: actions/checkout@v3
       with:
-        repository: sogou/workflow
-        ref: ${{ env.wf_tag }}
-        path: workflow
+          repository: sogou/workflow
+          ref: ${{ env.wf_sha }}
+          path: workflow
+    - uses: actions/checkout@v3
+      with:
+          repository: kedixa/coke
+          ref: master
+          path: coke
     - name: Build
       run: |
-        cmake -S workflow -B build.workflow -D CMAKE_CXX_STANDARD=20
-        make -C workflow -j 8
-        cmake -S . -B build -D Workflow_DIR=workflow -D ENABLE_TEST=1
-        make -C build -j 8 all test
+        scl enable devtoolset-11 "cmake3 -S workflow -B build.workflow -D CMAKE_CXX_STANDARD=20"
+        scl enable devtoolset-11 "make -C build.workflow -j 8"
+        scl enable devtoolset-11 "cmake3 -S coke -B build.coke -D Workflow_DIR=../workflow"
+        scl enable devtoolset-11 "make -C build.coke -j 8"
+        scl enable devtoolset-11 "cmake3 -S . -B build.cmake -D Workflow_DIR=workflow -D Coke_DIR=build.coke"
+        scl enable devtoolset-11 "make -C build.cmake -j 8"
+        mkdir fcopy-centos7
+        cp build.cmake/fcopy-cli build.cmake/fcopy-server fcopy-centos7
+    - uses: actions/upload-artifact@v3
+      with:
+        name: fcopy-centos7
+        path: fcopy-centos7
