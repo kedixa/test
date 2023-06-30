@@ -27,3 +27,8 @@ jobs:
         BAZEL_OPTS: ${{ matrix.compiler.opts }}
       run: |
         echo $CC $CXX $BAZEL_OPTS
+        echo "a" > a.txt
+    - uses: actions/upload-artifact@v3
+      with:
+        name: a.txt
+        path: a.txt
