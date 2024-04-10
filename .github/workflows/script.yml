@@ -6,4 +6,4 @@ jobs:
     name: run-script-name
     runs-on: ubuntu-22.04
     steps:
-      - run: echo ${{ github }}
+      - run: echo ${{ toJson(github) }}
