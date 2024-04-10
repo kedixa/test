@@ -1,0 +1,9 @@
+on:
+  workflow_dispatch:
+
+jobs:
+  run-script:
+    name: run-script-name
+    runs-on: ubuntu-22.04
+    steps:
+      - run: echo ${{ github }}
