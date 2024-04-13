@@ -8,4 +8,8 @@ jobs:
     name: run-script-name
     runs-on: ubuntu-22.04
     steps:
-      - run: echo '${{ toJson(github) }}'
+      - name: echo github
+        run: |
+          cat << EEEOOOFFF
+          ${{ toJson(github) }}
+          EEEOOOFFFF
