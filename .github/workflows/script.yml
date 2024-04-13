@@ -2,6 +2,8 @@ on:
   workflow_dispatch:
   issues:
     types: [labeled]
+  pull_request:
+    types: [labeled]
 
 jobs:
   run-script:
@@ -12,4 +14,4 @@ jobs:
         run: |
           cat << EEEOOOFFF
           ${{ toJson(github) }}
-          EEEOOOFFFF
+          EEEOOOFFF
