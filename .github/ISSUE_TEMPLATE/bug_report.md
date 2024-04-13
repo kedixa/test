@@ -1,40 +1,35 @@
 ---
 name: Bug
-about: File a bug/issue
+about: 反馈问题/File a bug
 title: '[BUG] <title>'
-labels: Bug, Needs Triage
-assignees: ''
+labels: Bug
+assignees: 'kedixa'
 
 ---
 
-<!--
-Note: Please search to see if an issue already exists for the bug you encountered.
--->
+<!-- Note: Please search to see if an issue already exists. -->
+<!-- 注意: 请在Issues中搜索以查看问题是否已存在。 -->
 
-### Current Behavior:
+### 现状/Current Behavior
 <!-- A concise description of what you're experiencing. -->
+<!-- 请描述您遇到的问题。 -->
 
-### Expected Behavior:
+
+### 正确行为/Expected Behavior
 <!-- A concise description of what you expected to happen. -->
+<!-- 请描述您期望得到的效果。 -->
 
-### Steps To Reproduce:
-<!--
-Example: steps to reproduce the behavior:
-1. In this environment...
-2. With this config...
-3. Run '...'
-4. See error...
--->
 
-### Environment:
-<!--
-Example:
-- OS: Ubuntu 20.04
-- Node: 13.14.0
-- npm: 7.6.3
--->
+### 复现方法/Steps To Reproduce
+<!-- Provide minimal reproducible code or detailed reproduction methods. -->
+<!-- 提供最小可复现代码或详细复现方法。 -->
 
-### Anything else:
-<!--
-Links? References? Anything that will give us more context about the issue that you are encountering!
--->
+
+### 运行环境/Environment
+- 操作系统/OS:
+- 编译器版本/Compiler version:
+- Workflow版本/Workflow version:
+- Coke版本/Coke version:
+
+
+### 其他信息/Anything else
