@@ -5,26 +5,37 @@ on:
 
 jobs:
   bench-coke:
-    name: bench coke
+    name: Coke Benchmark
     runs-on: ubuntu-22.04
     steps:
-    - name: Prepare
-      run: |
-        cat /proc/cpuinfo
-        cat /proc/meminfo
     - name: Checkout
       uses: actions/checkout@v3
       with:
         repository: kedixa/coke
-        ref: master
+        ref: dev
     - name: Build
       run: |
-        bazel build ...
-        echo "### Bench Go" >> bench.md
-        ./bazel-bin/benchmark/bench_go -c 32 -n 8 -t 2000000 -y >> bench.md
+        bazel build //benchmark/...
 
-        echo -e "\n### Bench Timer" >> bench.md
-        ./bazel-bin/benchmark/bench_timer -h 12 -p 8 -t 2000000 -y >> bench.md
+        (echo "# Benchmark"
+        echo "The benchmark runs in Github Actions"
+        echo ""
+
+        echo "## Environment"
+        echo "\`\`\`"
+        lscpu
+        lsmem
+        echo "\`\`\`"
+        echo ""
+
+        echo "## Go"
+        ./bazel-bin/benchmark/bench_go -c 32 -n 8 -t 2000000 -y
+        echo ""
+
+        echo "## Timer"
+        ./bazel-bin/benchmark/bench_timer -h 12 -p 8 -t 2000000 -y
+        echo ""
+        ) > bench.md
 
     - name: Comment
       uses: actions/github-script@v7
