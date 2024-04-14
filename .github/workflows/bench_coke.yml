@@ -1,7 +1,10 @@
-name: Benchmark
+name: Benchmark on label 'do-bench'
 
 on:
-  workflow_dispatch:
+  issues:
+    types: [labeled]
+  pull_request:
+    types: [labeled]
 
 jobs:
   bench-coke:
@@ -9,16 +12,16 @@ jobs:
     runs-on: ubuntu-22.04
     steps:
     - name: Checkout
-      uses: actions/checkout@v3
+      uses: actions/checkout@v4
       with:
         repository: kedixa/coke
         ref: dev
-    - name: Build
+    - name: Build and benchmark
       run: |
         bazel build //benchmark/...
 
         (echo "# Benchmark"
-        echo "The benchmark runs in Github Actions"
+        echo "The benchmark runs on Github Actions"
         echo ""
 
         echo "## Environment"
@@ -29,12 +32,23 @@ jobs:
         echo ""
 
         echo "## Go"
-        ./bazel-bin/benchmark/bench_go -c 32 -n 8 -t 2000000 -y
+        echo "Bench command \`bench_go -c 64 -n 8 -m 60 -t 2000000 -y\`"
+        echo ""
+        ./bazel-bin/benchmark/bench_go -c 64 -n 8 -m 60 -t 2000000 -y
         echo ""
 
         echo "## Timer"
-        ./bazel-bin/benchmark/bench_timer -h 12 -p 8 -t 2000000 -y
+        echo "Bench command \`bench_timer -c 4096 -h 12 -p 6 -m 60 -t 2000000 -y\`"
         echo ""
+        ./bazel-bin/benchmark/bench_timer -c 4096 -h 12 -p 6 -m 60 -t 2000000 -y
+        echo ""
+
+        echo "## Dag"
+        echo "Bench command \`bench_graph -g 10 -n 128 -t 500 -k 3 -y\`"
+        echo ""
+        ./bazel-bin/benchmark/bench_graph -g 10 -n 128 -t 500 -k 3 -y
+        echo ""
+
         ) > bench.md
 
     - name: Comment
