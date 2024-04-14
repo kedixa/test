@@ -1,0 +1,26 @@
+on:
+  workflow_dispatch:
+
+jobs:
+  bench-coke:
+    name: bench coke
+    runs-on: ubuntu-22.04
+    steps:
+    - name: Prepare
+      run: |
+        sudo apt update
+        sudo apt install -y libgtest-dev valgrind
+    - uses: actions/checkout@v3
+      with:
+        repository: kedixa/coke
+        ref: master
+    - name: Build
+      run: |
+        bazel build ...
+        echo "### Bench Go" >> bench.md
+        ./bazel-bin/benchmark/bench_go -c 32 -n 8 -t 1000000 -y >> bench.md
+
+        echo "\n### Bench Timer" >> bench.md
+        ./bazel-bin/benchmark/bench_timer -h 8 -p 8 -t 1000000 -y >> bench.md
+
+        cat bench.md
