@@ -10,8 +10,8 @@ jobs:
     steps:
     - name: Prepare
       run: |
-        sudo apt update
-        sudo apt install -y libgtest-dev valgrind
+        cat /proc/cpuinfo
+        cat /proc/meminfo
     - name: Checkout
       uses: actions/checkout@v3
       with:
