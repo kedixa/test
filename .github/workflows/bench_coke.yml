@@ -10,6 +10,7 @@ jobs:
   bench-coke:
     name: Coke Benchmark
     runs-on: ubuntu-22.04
+    if: (contains('["issues", "pull_request"]', github.event_name) && github.event.label.name == 'test' && github.actor == 'kedixa')
     steps:
     - name: Checkout
       uses: actions/checkout@v4
@@ -58,8 +59,8 @@ jobs:
           const fs = require('fs/promises')
           const data = await fs.readFile('./bench.md', 'utf-8')
           await github.rest.issues.createComment({
-            issue_number: 4,
-            repo: 'test',
-            owner: 'kedixa',
+            issue_number: context.repo.issue.number,
+            repo: context.repo.repo,
+            owner: context.repo.owner,
             body: data
           })
