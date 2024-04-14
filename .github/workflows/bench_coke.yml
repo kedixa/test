@@ -59,7 +59,7 @@ jobs:
           const fs = require('fs/promises')
           const data = await fs.readFile('./bench.md', 'utf-8')
           await github.rest.issues.createComment({
-            issue_number: context.repo.issue.number,
+            issue_number: context.issue.number,
             repo: context.repo.repo,
             owner: context.repo.owner,
             body: data
