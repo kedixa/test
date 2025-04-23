@@ -10,6 +10,9 @@ jobs:
     name: macos-15
     runs-on: macos-15
     steps:
+    - name: Prepare
+      run: |
+        brew install googletest
     - uses: actions/checkout@v4
       with:
         repository: kedixa/coke
