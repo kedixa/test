@@ -3,7 +3,7 @@ on:
 
 env:
   wf_tag: v0.11.6
-  coke_tag: master
+  coke_tag: dev
 
 jobs:
   build-macos-15:
