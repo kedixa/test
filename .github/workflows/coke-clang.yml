@@ -1,0 +1,38 @@
+name: CI with Clang and libc++
+
+on:
+  workflow_dispatch:
+
+env:
+  wf_tag: v0.11.11
+
+jobs:
+  build-with-clang:
+    name: ubuntu-24.04
+    runs-on: ubuntu-24.04
+    steps:
+    - name: Prepare
+      run: |
+        sudo apt update
+        sudo apt install -y libgtest-dev valgrind
+    - uses: actions/checkout@v4
+    - uses: actions/checkout@v4
+      with:
+        repository: sogou/workflow
+        ref: ${{ env.wf_tag }}
+        path: workflow
+    - name: Build With Clang
+      run: |
+        cmake -S workflow -B build.workflow -D CMAKE_CXX_STANDARD=20 \
+          -D CMAKE_C_COMPILER=clang \
+          -D CMAKE_CXX_COMPILER=clang++ \
+          -D CMAKE_CXX_FLAGS="-stdlib=libc++"
+        cmake --build build.workflow -j 8
+        cmake -S . -B build.cmake -D Workflow_DIR=workflow \
+          -D CMAKE_CXX_STANDARD=20 \
+          -D CMAKE_C_COMPILER=clang \
+          -D CMAKE_CXX_COMPILER=clang++ \
+          -D CMAKE_CXX_FLAGS="-stdlib=libc++" \
+          -D COKE_ENABLE_TEST=1 -D COKE_ENABLE_EXAMPLE=1 \
+          -D COKE_ENABLE_BENCHMARK=1
+        cmake --build build.cmake -j 8
