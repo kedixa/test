@@ -1,5 +1,11 @@
 on:
   workflow_dispatch:
+    inputs:
+      name:
+        description: 'Name parameter'
+        required: false
+        default: 'hello'
+        type: string
 
 jobs:
   build:
@@ -13,3 +19,6 @@ jobs:
     - name: Build With GCC
       run: |
         echo $CC $CXX $BAZEL_OPTS
+    - name: Echo Name
+      run: |
+        echo "${{ github.event.inputs.name }}"
