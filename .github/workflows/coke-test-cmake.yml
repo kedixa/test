@@ -14,7 +14,7 @@ on:
 
 jobs:
   test01:
-    name: Build coke, wf subdir
+    name: Coke master, WF subdir
     runs-on: ubuntu-24.04
     steps:
     - name: Prepare
@@ -40,4 +40,163 @@ jobs:
           -DCOKE_ENABLE_TEST=ON \
           -DCOKE_ENABLE_EXAMPLE=ON \
           -DCOKE_ENABLE_BENCHMARK=ON
+        cmake --build build.cmake -j 8
+  test02:
+    name: Coke master, WF buildtree
+    runs-on: ubuntu-24.04
+    steps:
+    - name: Prepare
+      run: |
+        sudo apt update
+        sudo apt install -y libgtest-dev valgrind
+    - uses: actions/checkout@v4
+      with:
+        repository: kedixa/coke
+        ref: ${{ github.event.inputs.cokeref }}
+    - uses: actions/checkout@v4
+      with:
+        repository: sogou/workflow
+        ref: ${{ github.event.inputs.wfref }}
+        path: workflow
+    - name: Build with CMake
+      run: |
+        # Build workflow
+        cmake -S workflow -B build.workflow -DCMAKE_CXX_STANDARD=20
+        cmake --build build.workflow -j 8
+        # Build coke
+        cmake -S . -B build.cmake \
+          -Dworkflow_DIR=workflow \
+          -DCMAKE_CXX_STANDARD=20 \
+          -DCOKE_BUILD_STATIC=ON \
+          -DCOKE_BUILD_SHARED=ON \
+          -DCOKE_ENABLE_TEST=ON \
+          -DCOKE_ENABLE_EXAMPLE=ON \
+          -DCOKE_ENABLE_BENCHMARK=ON
+        cmake --build build.cmake -j 8
+  test03:
+    name: Coke master, WF installed
+    runs-on: ubuntu-24.04
+    steps:
+    - name: Prepare
+      run: |
+        sudo apt update
+        sudo apt install -y libgtest-dev valgrind
+    - uses: actions/checkout@v4
+      with:
+        repository: kedixa/coke
+        ref: ${{ github.event.inputs.cokeref }}
+    - uses: actions/checkout@v4
+      with:
+        repository: sogou/workflow
+        ref: ${{ github.event.inputs.wfref }}
+        path: workflow
+    - name: Build with CMake
+      run: |
+        # Build workflow
+        cmake -S workflow -B build.workflow -DCMAKE_CXX_STANDARD=20
+        cmake --build build.workflow -j 8
+        cmake --install build.workflow --prefix ./local
+        # Build coke
+        cmake -S . -B build.cmake \
+          -DCMAKE_PREFIX_PATH=./local \
+          -DCMAKE_CXX_STANDARD=20 \
+          -DCOKE_BUILD_STATIC=ON \
+          -DCOKE_BUILD_SHARED=ON \
+          -DCOKE_ENABLE_TEST=ON \
+          -DCOKE_ENABLE_EXAMPLE=ON \
+          -DCOKE_ENABLE_BENCHMARK=ON
+        cmake --build build.cmake -j 8
+  test04:
+    name: Test master, Coke subdir, WF subdir
+    runs-on: ubuntu-24.04
+    steps:
+    - name: Prepare
+      run: |
+        sudo apt update
+        sudo apt install -y libgtest-dev valgrind
+    - uses: actions/checkout@v4
+    - uses: actions/checkout@v4
+      with:
+        repository: kedixa/coke
+        ref: ${{ github.event.inputs.cokeref }}
+        path: coke
+    - uses: actions/checkout@v4
+      with:
+        repository: sogou/workflow
+        ref: ${{ github.event.inputs.wfref }}
+        path: workflow
+    - name: Build with CMake
+      run: |
+        cp cmake/coke.cmake CMakeLists.txt
+        cmake -S . -B build.cmake -DBOTH_SUBDIR=ON
+        cmake --build build.cmake -j 8
+  test05:
+    name: Test master, Coke subdir, WF installed
+    runs-on: ubuntu-24.04
+    steps:
+    - name: Prepare
+      run: |
+        sudo apt update
+        sudo apt install -y libgtest-dev valgrind
+    - uses: actions/checkout@v4
+    - uses: actions/checkout@v4
+      with:
+        repository: kedixa/coke
+        ref: ${{ github.event.inputs.cokeref }}
+        path: coke
+    - uses: actions/checkout@v4
+      with:
+        repository: sogou/workflow
+        ref: ${{ github.event.inputs.wfref }}
+        path: workflow
+    - name: Build with CMake
+      run: |
+        # Build workflow
+        cmake -S workflow -B build.workflow -DCMAKE_CXX_STANDARD=20
+        cmake --build build.workflow -j 8
+        cmake --install build.workflow --prefix ./local
+        # Build test
+        cp cmake/coke.cmake CMakeLists.txt
+        cmake -S . -B build.cmake \
+          -DCOKE_SUBDIR=ON \
+          -DCMAKE_PREFIX_PATH=./local
+        cmake --build build.cmake -j 8
+  test06:
+    name: Test master, Coke installed, WF installed
+    runs-on: ubuntu-24.04
+    steps:
+    - name: Prepare
+      run: |
+        sudo apt update
+        sudo apt install -y libgtest-dev valgrind
+    - uses: actions/checkout@v4
+    - uses: actions/checkout@v4
+      with:
+        repository: kedixa/coke
+        ref: ${{ github.event.inputs.cokeref }}
+        path: coke
+    - uses: actions/checkout@v4
+      with:
+        repository: sogou/workflow
+        ref: ${{ github.event.inputs.wfref }}
+        path: workflow
+    - name: Build with CMake
+      run: |
+        # Build workflow
+        cmake -S workflow -B build.workflow -DCMAKE_CXX_STANDARD=20
+        cmake --build build.workflow -j 8
+        cmake --install build.workflow --prefix ./local
+        # Build coke
+        cmake -S coke -B build.coke \
+          -DCMAKE_PREFIX_PATH=./local \
+          -DCMAKE_CXX_STANDARD=20 \
+          -DCOKE_BUILD_STATIC=ON \
+          -DCOKE_BUILD_SHARED=ON
+        cmake --build build.coke -j 8
+        cmake --install build.coke --prefix ./local
+        # Build test
+        cp cmake/coke.cmake CMakeLists.txt
+        cmake -S . -B build.cmake \
+          -DCMAKE_PREFIX_PATH=./local \
+          -DBOTH_INSTALLED=ON
         cmake --build build.cmake -j 8
