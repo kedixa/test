@@ -1,0 +1,5 @@
+add_executable(helloworld helloworld.cpp)
+target_link_libraries(helloworld
+    PRIVATE
+        coke::coke
+)

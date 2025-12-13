@@ -1,0 +1,43 @@
+on:
+  workflow_dispatch:
+    inputs:
+      cokeref:
+        description: 'coke ref'
+        required: false
+        default: 'master'
+        type: string
+      wfref:
+        description: 'workflow ref'
+        required: false
+        default: 'v0.11.11'
+        type: string
+
+jobs:
+  test01:
+    name: Build coke, wf subdir
+    runs-on: ubuntu-24.04
+    steps:
+    - name: Prepare
+      run: |
+        sudo apt update
+        sudo apt install -y libgtest-dev valgrind
+    - uses: actions/checkout@v4
+      with:
+        repository: kedixa/coke
+        ref: ${{ github.event.inputs.cokeref }}
+    - uses: actions/checkout@v4
+      with:
+        repository: sogou/workflow
+        ref: ${{ github.event.inputs.wfref }}
+        path: workflow
+    - name: Build with CMake
+      run: |
+        cmake -S . -B build.cmake \
+          -DCOKE_WORKFLOW_SRC_DIR=workflow \
+          -DCMAKE_CXX_STANDARD=20 \
+          -DCOKE_BUILD_STATIC=ON \
+          -DCOKE_BUILD_SHARED=ON \
+          -DCOKE_ENABLE_TEST=ON \
+          -DCOKE_ENABLE_EXAMPLE=ON \
+          -DCOKE_ENABLE_BENCHMARK=ON
+        cmake --build build.cmake -j 8
