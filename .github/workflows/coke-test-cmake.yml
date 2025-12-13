@@ -188,7 +188,7 @@ jobs:
         cmake --install build.workflow --prefix ./local
         # Build coke
         cmake -S coke -B build.coke \
-          -DCMAKE_PREFIX_PATH=./local \
+          -DCMAKE_PREFIX_PATH=../local \
           -DCMAKE_CXX_STANDARD=20 \
           -DCOKE_BUILD_STATIC=ON \
           -DCOKE_BUILD_SHARED=ON
