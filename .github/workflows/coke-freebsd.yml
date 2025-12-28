@@ -1,0 +1,48 @@
+name: CI on FreeBSD
+
+on:
+  workflow_dispatch:
+    inputs:
+      cokeref:
+        description: 'coke ref'
+        required: false
+        default: 'master'
+        type: string
+      wfref:
+        description: 'workflow ref'
+        required: false
+        default: 'v0.11.11'
+        type: string
+
+jobs:
+  freebsd:
+    name: freebsd
+    runs-on: ubuntu-latest
+    steps:
+    - uses: actions/checkout@v4
+      with:
+        repository: kedixa/coke
+        ref: ${{ github.event.inputs.cokeref }}
+    - uses: actions/checkout@v4
+      with:
+        repository: sogou/workflow
+        ref: ${{ github.event.inputs.wfref }}
+        path: workflow
+
+    - name: Build on FreeBSD
+      uses: vmactions/freebsd-vm@v1
+      with:
+        prepare: |
+          pkg update -f
+          pkg install -y cmake gmake pkgconf openssl devel/googletest valgrind
+        run: |
+          cmake -S . -B build.cmake \
+            -DCOKE_WORKFLOW_SRC_DIR=workflow \
+            -DCMAKE_CXX_STANDARD=20 \
+            -DCOKE_BUILD_STATIC=ON \
+            -DCOKE_BUILD_SHARED=ON \
+            -DCOKE_ENABLE_TEST=ON \
+            -DCOKE_ENABLE_EXAMPLE=ON \
+            -DCOKE_ENABLE_BENCHMARK=ON
+          cmake --build build.cmake -j 8
+          ctest --test-dir build.cmake/test -j 1
