@@ -32,6 +32,8 @@ jobs:
     - name: Build on FreeBSD
       uses: vmactions/freebsd-vm@v1
       with:
+        usesh: true
+        release: "14.3"
         prepare: |
           pkg update -f
           pkg install -y cmake gmake pkgconf openssl devel/googletest valgrind
