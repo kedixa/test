@@ -45,4 +45,4 @@ jobs:
             -DCOKE_ENABLE_EXAMPLE=ON \
             -DCOKE_ENABLE_BENCHMARK=ON
           cmake --build build.cmake -j 8
-          ctest --test-dir build.cmake/test -j 1
+          ctest --test-dir build.cmake/test -j 4 --output-on-failure
